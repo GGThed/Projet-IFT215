@@ -33,3 +33,24 @@ function item_to_html(item){
     item_card.append(item_head).append(item_body).append(item_detail);
     return $('<div></div>').addClass('col-md-3') .append(item_card);
 }
+
+function add_item(id_item){
+    console.log(id_item);
+    $.ajax({
+        url: "/clients/"+1+"/panier",
+        method:"POST",
+        data: {"idProduit": id_item, "quantite": 1},
+        beforeSend: function (xhr){
+            xhr.setRequestHeader('Authorization', "Basic "+ "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZENsaWVudCI6MSwicm9sZSI6ImNsaWVudCIsImlhdCI6MTYzNjc1MjI1MywiZXhwIjoxODM2NzUyMjUzfQ.qMcKC0NeuVseNSeGtyaxUvadutNAfzxlhL5LYPsRB8k");
+        },
+        success: function( result ) {
+            console.log(result);
+            let sum = 0;
+            result.items.forEach(sommeQuantite)
+            function sommeQuantite(item) {
+                sum += item.quantite;
+            }
+            $('#item_counter').text(sum)
+        }
+    });
+}
