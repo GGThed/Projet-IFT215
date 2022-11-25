@@ -5,6 +5,10 @@ $(function () {
     console.log("ift215")
 });
 
+function itemCounter(){
+
+}
+
 function chargerproduit(){
     $.ajax({
         url: "/produits",
@@ -82,7 +86,39 @@ function panier_to_html(item){
         .addClass('row')
         .append('<div class="col">' + item.nomProduit +'</div>')
         .append('<div class="col">' + item.prix +'</div>')
-        .append('<div class="col">' + item.quantite +'</div')
+        .append('<div class="col"><input type="number" id="quantity" name="quantity" value="' + item.quantite + '"></div>')
         .append('<div class="col">' + (item.prix * item.quantite).toFixed(2) +'</div>');
     return item_panier.append('<hr>');
+}
+
+input.addEventListener('change', updateValue);
+
+function updateValue(e) {
+    item_panier=$('<div></div>')
+        .addClass('row')
+        .append('<div class="col">' + item.nomProduit +'</div>')
+        .append('<div class="col">' + item.prix +'</div>')
+        .append('<div class="col"><input type="number" id="quantity" name="quantity" value="' + item.quantite + '"></div>')
+        .append('<div class="col">' + (item.prix * item.quantite).toFixed(2) +'</div>');
+    return item_panier.append('<hr>');
+}
+
+function change_item_qty(id_item, qty){
+    $.ajax({
+        url: "/clients/"+ID_CLIENT+"/panier/" + qty,
+        method:"PUT",
+        data: {"idProduit": id_item, "quantite": qty},
+        beforeSend: function (xhr){
+            xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
+        },
+        success: function( result ) {
+            console.log(result);
+            let sum = 0;
+            result.items.forEach(sommeQuantite)
+            function sommeQuantite(item) {
+                sum += item.quantite;
+            }
+            $('#item_counter').text(sum)
+        }
+    });
 }
