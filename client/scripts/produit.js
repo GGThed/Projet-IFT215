@@ -86,39 +86,43 @@ function panier_to_html(item){
         .addClass('row')
         .append('<div class="col">' + item.nomProduit +'</div>')
         .append('<div class="col">' + item.prix +'</div>')
-        .append('<div class="col"><input type="number" id="quantity" name="quantity" value="' + item.quantite + '"></div>')
+        .append('<div class="col">' +
+            '<input onchange="delete_item(' + item.id + ', ' + item.quantite + ')" ' +
+            'type="number" id="quantity" name="quantity" value="' + item.quantite + '"></div>')
         .append('<div class="col">' + (item.prix * item.quantite).toFixed(2) +'</div>');
     return item_panier.append('<hr>');
 }
 
-input.addEventListener('change', updateValue);
+/*const input = document.querySelector('input');
+input.addEventListener('change', delete_item);*/
 
-function updateValue(e) {
-    item_panier=$('<div></div>')
-        .addClass('row')
-        .append('<div class="col">' + item.nomProduit +'</div>')
-        .append('<div class="col">' + item.prix +'</div>')
-        .append('<div class="col"><input type="number" id="quantity" name="quantity" value="' + item.quantite + '"></div>')
-        .append('<div class="col">' + (item.prix * item.quantite).toFixed(2) +'</div>');
-    return item_panier.append('<hr>');
-}
-
-function change_item_qty(id_item, qty){
+function delete_item(id_item, qty){
     $.ajax({
-        url: "/clients/"+ID_CLIENT+"/panier/" + qty,
-        method:"PUT",
+        url: "/clients/"+ID_CLIENT+"/panier/"+id_item,
+        method:"DELETE",
+        beforeSend: function (xhr){
+            xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
+        },
+        success: function( result ) {
+            console.log(result);
+            update_item_qty(id_item, qty)
+        }
+    });
+}
+
+function update_item_qty(id_item, qty){
+    $.ajax({
+        url: "/clients/"+ID_CLIENT+"/panier",
+        method:"POST",
         data: {"idProduit": id_item, "quantite": qty},
         beforeSend: function (xhr){
             xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
         },
         success: function( result ) {
             console.log(result);
-            let sum = 0;
-            result.items.forEach(sommeQuantite)
-            function sommeQuantite(item) {
-                sum += item.quantite;
-            }
-            $('#item_counter').text(sum)
+            $.each(result.items, function (key, value) {
+                item = panier_to_html(value);
+            });
         }
     });
 }
