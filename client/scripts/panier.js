@@ -23,21 +23,12 @@ function panier_to_html(item){
         .append('<div class="col">' + item.nomProduit +'</div>')
         .append('<div class="col">' + item.prix +'</div>')
         .append('<div class="col">' +
-            '<button id="moins" onclick="enlever_du_panier(' + item.id + ')"> - </button>' +
-            '<span> ' + item.quantite + ' </span>' +
-            '<button id="plus" onclick="ajout_au_panier(' + item.id + ')"> + </button></div>')
-        .append('<div class="col">' + (item.prix * item.quantite).toFixed(2) +'</div>');
+            '<button id="moins" onclick="panier_remove_item(' + item.id + ')"> - </button>' +
+            '<span id="panier_produit_qty'+item.id+'"> ' + item.quantite + ' </span>' +
+            '<button id="plus" onclick="panier_add_item(' + item.id + ')"> + </button></div>')
+        .append('<div class="col" id="panier_produit_prix'+item.id+'">' +
+            (item.prix * item.quantite).toFixed(2) +'</div>');
     return item_panier.append('<hr>');
-}
-
-function ajout_au_panier(id_item){
-    panier_add_item(id_item);
-    location.reload();
-}
-
-function enlever_du_panier(id_item){
-    panier_remove_item(id_item);
-    location.reload();
 }
 
 function panier_add_item(id_item){
@@ -49,6 +40,13 @@ function panier_add_item(id_item){
             xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
         },
         success: function( result ) {
+            result.items.forEach(updatePanier)
+            function updatePanier(item) {
+                $('#panier_produit_qty'+item.id).text(' ' + item.quantite + ' ');
+                $('#panier_produit_prix'+item.id).text(' ' +(item.prix * item.quantite).toFixed(2) + ' ');
+            }
+            let total = 'Total: '+ result.valeur.toFixed(2)
+            $('#total').text(total)
         }
     });
 }
@@ -62,7 +60,13 @@ function panier_remove_item(id_item){
             xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
         },
         success: function( result ) {
-            $('#item_counter').text(sum)
+            result.items.forEach(updatePanier)
+            function updatePanier(item) {
+                $('#panier_produit_qty'+item.id).text(' ' + item.quantite + ' ');
+                $('#panier_produit_prix'+item.id).text(' ' +(item.prix * item.quantite).toFixed(2) + ' ');
+            }
+            let total = 'Total: '+ result.valeur.toFixed(2)
+            $('#total').text(total)
         }
     });
 }

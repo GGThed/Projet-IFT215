@@ -9,7 +9,7 @@
         "courriel": "aaa@bbb.com",
         "mdp": "$2b$08$CEfAuisfWI/driqC4REyfOo/y8RG0g1dw7ngClRLBk1QANEs.U53u",
         "panier": {
-            "valeur": 19.96,
+            "valeur": 31.11,
             "items": [
                 {
                     "id": 0,
@@ -33,7 +33,7 @@
                     "nomProduit": "concombre",
                     "descriptionProduit": "pas un jouet",
                     "prix": 2.23,
-                    "quantite": 0
+                    "quantite": 5
                 },
                 {
                     "id": 3,

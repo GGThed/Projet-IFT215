@@ -9,10 +9,30 @@ function chargerproduit(){
     $.ajax({
         url: "/produits",
         success: function( result ) {
+            console.log(result);
             $.each(result, function (key, value) {
-                item = item_to_html(value);
+                qty = 0;
+                item = item_to_html(value, qty);
                 $('#list_items').append(item);
             });
+        }
+    });
+    $.ajax({
+        url: "/clients/"+ID_CLIENT+"/panier",
+        method: "GET",
+        beforeSend: function (xhr){
+            xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
+        },
+        success: function( result ) {
+            console.log(result);
+            let sum = 0;
+            result.items.forEach(sommeQuantite)
+            function sommeQuantite(item) {
+                qty = item.quantite;
+                sum += qty;
+                $('#produit_item_qty'+item.id).text(qty+' ');
+            }
+            $('#item_counter').text(sum)
         }
     });
 }
@@ -33,8 +53,11 @@ function item_to_html(item){
         .append(' <h1 class="card-title text-center"> $' + item.prix +'</h1>');
     item_footer = $('<p></p>')
         .addClass('w-100 display-6 text-center')
-        .append('<button type="button" class="btn btn-primary position-relative" onclick="produit_add_item(' + item.id + ')">' +
-            ' <i class="bi bi-cart-plus"></i> </button>');
+        .append('<button type="button" class="btn btn-primary position-relative" onclick="produit_remove_item(' + item.id + ')">' +
+            '<i class="bi bi-dash-lg"></i></button> ' +
+            '<span id="produit_item_qty'+item.id +'"></span>' +
+            '<button type="button" class="btn btn-primary position-relative" onclick="produit_add_item(' + item.id + ')" >' +
+            '<i class="bi bi-plus-lg"></i></button>');
     item_card.append(item_head).append(item_body).append(item_detail).append(item_footer);
     return $('<div></div>').addClass('col-md-3').append(item_card);
 }
@@ -48,10 +71,13 @@ function produit_add_item(id_item){
             xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
         },
         success: function( result ) {
+            console.log(result);
             let sum = 0;
             result.items.forEach(sommeQuantite)
             function sommeQuantite(item) {
-                sum += item.quantite;
+                qty = item.quantite;
+                sum += qty;
+                $('#produit_item_qty'+item.id).text(qty+' ');
             }
             $('#item_counter').text(sum)
         }
@@ -60,20 +86,22 @@ function produit_add_item(id_item){
 
 function produit_remove_item(id_item){
     $.ajax({
-        url: "/clients/"+ID_CLIENT+"/panier/"+id_item,
+        url: "/clients/"+ID_CLIENT+"/panier/" + id_item,
         method:"PUT",
         data: {"quantite": -1},
         beforeSend: function (xhr){
             xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
         },
         success: function( result ) {
+            console.log(result);
             let sum = 0;
             result.items.forEach(sommeQuantite)
             function sommeQuantite(item) {
-                sum += item.quantite;
+                qty = item.quantite;
+                sum += qty;
+                $('#produit_item_qty'+item.id).text(qty+' ');
             }
             $('#item_counter').text(sum)
         }
     });
 }
-
