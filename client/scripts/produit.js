@@ -34,8 +34,11 @@ function item_to_html(item){
         .append(' <h1 class="card-title text-center"> $' + item.prix +'</h1>');
     item_footer = $('<p></p>')
         .addClass('w-100 display-6 text-center')
-        .append('<button type="button" class="btn btn-primary position-relative" onclick="add_item(' + item.id + ')">' +
-            ' <i class="bi bi-cart-plus"></i> </button>');
+        // .append('<button type="button" class="btn btn-primary position-relative" onclick="add_item(' + item.id + ')">' +
+        //     ' <i class="bi bi-cart-plus"></i> </button>');
+        .append('<button type="button" class="btn btn-primary position-relative" onclick="remove_item(' + item.id + ')"><i class="bi bi-dash-lg"></i></button> ' +
+                '<div>' +  + '</div>' +
+                '<button type="button" class="btn btn-primary position-relative" onclick="add_item(' + item.id + ')" ><i class="bi bi-plus-lg"></i></button>');
     item_card.append(item_head).append(item_body).append(item_detail).append(item_footer);
     return $('<div></div>').addClass('col-md-3').append(item_card);
 }
@@ -45,6 +48,26 @@ function add_item(id_item){
         url: "/clients/"+ID_CLIENT+"/panier",
         method:"POST",
         data: {"idProduit": id_item, "quantite": 1},
+        beforeSend: function (xhr){
+            xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
+        },
+        success: function( result ) {
+            console.log(result);
+            let sum = 0;
+            result.items.forEach(sommeQuantite)
+            function sommeQuantite(item) {
+                    sum += item.quantite;
+            }
+            $('#item_counter').text(sum)
+        }
+    });
+}
+
+function remove_item(id_item){
+    $.ajax({
+        url: "/clients/"+ID_CLIENT+"/panier/" + id_item,
+        method:"PUT",
+        data: {"quantite": -1},
         beforeSend: function (xhr){
             xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
         },
