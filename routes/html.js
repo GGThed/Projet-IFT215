@@ -30,4 +30,9 @@ router.get('/panier', function(req, res){
     res.sendFile(path.join(__dirname + '/../client/panier.html'));
 });
 
+// ajout
+router.get('/connexion', function(req, res){
+    res.sendFile(path.join(__dirname + '/../client/connexion.html'));
+});
+
 module.exports = router
