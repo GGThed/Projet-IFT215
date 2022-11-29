@@ -11,9 +11,28 @@ function chargerproduit(){
         success: function( result ) {
             console.log(result);
             $.each(result, function (key, value) {
-                item = item_to_html(value);
+                qty = 0;
+                item = item_to_html(value, qty);
                 $('#list_items').append(item);
             });
+        }
+    });
+    $.ajax({
+        url: "/clients/"+ID_CLIENT+"/panier",
+        method: "GET",
+        beforeSend: function (xhr){
+            xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
+        },
+        success: function( result ) {
+            console.log(result);
+            let sum = 0;
+            result.items.forEach(sommeQuantite)
+            function sommeQuantite(item) {
+                qty = item.quantite;
+                sum += qty;
+                $('#item_qty'+item.id).text(qty+' ');
+            }
+            $('#item_counter').text(sum)
         }
     });
 }
@@ -34,16 +53,16 @@ function item_to_html(item){
         .append(' <h1 class="card-title text-center"> $' + item.prix +'</h1>');
     item_footer = $('<p></p>')
         .addClass('w-100 display-6 text-center')
-        // .append('<button type="button" class="btn btn-primary position-relative" onclick="add_item(' + item.id + ')">' +
-        //     ' <i class="bi bi-cart-plus"></i> </button>');
-        .append('<button type="button" class="btn btn-primary position-relative" onclick="remove_item(' + item.id + ')"><i class="bi bi-dash-lg"></i></button> ' +
-                '<div>' +  + '</div>' +
-                '<button type="button" class="btn btn-primary position-relative" onclick="add_item(' + item.id + ')" ><i class="bi bi-plus-lg"></i></button>');
+        .append('<button type="button" class="btn btn-primary position-relative" onclick="produit_remove_item(' + item.id + ')">' +
+            '<i class="bi bi-dash-lg"></i></button> ' +
+            '<span id="item_qty'+item.id +'"></span>' +
+            '<button type="button" class="btn btn-primary position-relative" onclick="produit_add_item(' + item.id + ')" >' +
+            '<i class="bi bi-plus-lg"></i></button>');
     item_card.append(item_head).append(item_body).append(item_detail).append(item_footer);
     return $('<div></div>').addClass('col-md-3').append(item_card);
 }
 
-function add_item(id_item){
+function produit_add_item(id_item){
     $.ajax({
         url: "/clients/"+ID_CLIENT+"/panier",
         method:"POST",
@@ -56,14 +75,16 @@ function add_item(id_item){
             let sum = 0;
             result.items.forEach(sommeQuantite)
             function sommeQuantite(item) {
-                    sum += item.quantite;
+                qty = item.quantite;
+                sum += qty;
+                $('#item_qty'+item.id).text(qty);
             }
             $('#item_counter').text(sum)
         }
     });
 }
 
-function remove_item(id_item){
+function produit_remove_item(id_item){
     $.ajax({
         url: "/clients/"+ID_CLIENT+"/panier/" + id_item,
         method:"PUT",
@@ -76,36 +97,11 @@ function remove_item(id_item){
             let sum = 0;
             result.items.forEach(sommeQuantite)
             function sommeQuantite(item) {
-                sum += item.quantite;
+                qty = item.quantite;
+                sum += qty;
+                $('#item_qty'+item.id).text(qty);
             }
             $('#item_counter').text(sum)
         }
     });
-}
-
-function chargerpanier(){
-    $.ajax({
-        url: "/clients/"+ID_CLIENT+"/panier",
-        beforeSend: function (xhr){
-            xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
-        },
-        success: function( result ) {
-            console.log(result);
-            $.each(result.items, function (key, value) {
-                item = panier_to_html(value);
-                $('#list_panier').append(item);
-            });
-            $('#total').append('<b>Total: '+ result.valeur.toFixed(2) +'</b>');
-        }
-    });
-}
-
-function panier_to_html(item){
-    item_panier=$('<div></div>')
-        .addClass('row')
-        .append('<div class="col">' + item.nomProduit +'</div>')
-        .append('<div class="col">' + item.prix +'</div>')
-        .append('<div class="col">' + item.quantite +'</div')
-        .append('<div class="col">' + (item.prix * item.quantite).toFixed(2) +'</div>');
-    return item_panier.append('<hr>');
 }
