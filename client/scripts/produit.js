@@ -5,15 +5,10 @@ $(function () {
     console.log("ift215")
 });
 
-function itemCounter(){
-
-}
-
 function chargerproduit(){
     $.ajax({
         url: "/produits",
         success: function( result ) {
-            console.log(result);
             $.each(result, function (key, value) {
                 item = item_to_html(value);
                 $('#list_items').append(item);
@@ -38,13 +33,13 @@ function item_to_html(item){
         .append(' <h1 class="card-title text-center"> $' + item.prix +'</h1>');
     item_footer = $('<p></p>')
         .addClass('w-100 display-6 text-center')
-        .append('<button type="button" class="btn btn-primary position-relative" onclick="add_item(' + item.id + ')">' +
+        .append('<button type="button" class="btn btn-primary position-relative" onclick="produit_add_item(' + item.id + ')">' +
             ' <i class="bi bi-cart-plus"></i> </button>');
     item_card.append(item_head).append(item_body).append(item_detail).append(item_footer);
     return $('<div></div>').addClass('col-md-3').append(item_card);
 }
 
-function add_item(id_item){
+function produit_add_item(id_item){
     $.ajax({
         url: "/clients/"+ID_CLIENT+"/panier",
         method:"POST",
@@ -53,7 +48,6 @@ function add_item(id_item){
             xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
         },
         success: function( result ) {
-            console.log(result);
             let sum = 0;
             result.items.forEach(sommeQuantite)
             function sommeQuantite(item) {
@@ -64,65 +58,22 @@ function add_item(id_item){
     });
 }
 
-function chargerpanier(){
-    $.ajax({
-        url: "/clients/"+ID_CLIENT+"/panier",
-        beforeSend: function (xhr){
-            xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
-        },
-        success: function( result ) {
-            console.log(result);
-            $.each(result.items, function (key, value) {
-                item = panier_to_html(value);
-                $('#list_panier').append(item);
-            });
-            $('#total').append('<b>Total: '+ result.valeur.toFixed(2) +'</b>');
-        }
-    });
-}
-
-function panier_to_html(item){
-    item_panier=$('<div></div>')
-        .addClass('row')
-        .append('<div class="col">' + item.nomProduit +'</div>')
-        .append('<div class="col">' + item.prix +'</div>')
-        .append('<div class="col">' +
-            '<input onchange="delete_item(' + item.id + ', ' + item.quantite + ')" ' +
-            'type="number" id="quantity" name="quantity" value="' + item.quantite + '"></div>')
-        .append('<div class="col">' + (item.prix * item.quantite).toFixed(2) +'</div>');
-    return item_panier.append('<hr>');
-}
-
-/*const input = document.querySelector('input');
-input.addEventListener('change', delete_item);*/
-
-function delete_item(id_item, qty){
+function produit_remove_item(id_item){
     $.ajax({
         url: "/clients/"+ID_CLIENT+"/panier/"+id_item,
-        method:"DELETE",
+        method:"PUT",
+        data: {"quantite": -1},
         beforeSend: function (xhr){
             xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
         },
         success: function( result ) {
-            console.log(result);
-            update_item_qty(id_item, qty)
+            let sum = 0;
+            result.items.forEach(sommeQuantite)
+            function sommeQuantite(item) {
+                sum += item.quantite;
+            }
+            $('#item_counter').text(sum)
         }
     });
 }
 
-function update_item_qty(id_item, qty){
-    $.ajax({
-        url: "/clients/"+ID_CLIENT+"/panier",
-        method:"POST",
-        data: {"idProduit": id_item, "quantite": qty},
-        beforeSend: function (xhr){
-            xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
-        },
-        success: function( result ) {
-            console.log(result);
-            $.each(result.items, function (key, value) {
-                item = panier_to_html(value);
-            });
-        }
-    });
-}
