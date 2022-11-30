@@ -25,7 +25,7 @@
                     "nomProduit": "Tomate",
                     "descriptionProduit": "Un poirier est une espèce d'arbre qui offre de bons suppléments",
                     "prix": 24.76,
-                    "quantite": 2
+                    "quantite": 0
                 },
                 {
                     "id": 2,
@@ -41,7 +41,7 @@
                     "nomProduit": "Poire",
                     "descriptionProduit": "Bien mure",
                     "prix": 4.99,
-                    "quantite": 1
+                    "quantite": 0
                 }
             ]
         },
