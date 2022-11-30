@@ -40,11 +40,10 @@ function panier_add_item(id_item){
             xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
         },
         success: function( result ) {
-            result.items.forEach(updatePanier)
-            function updatePanier(item) {
-                $('#panier_produit_qty'+item.id).text(' ' + item.quantite + ' ');
-                $('#panier_produit_prix'+item.id).text(' ' +(item.prix * item.quantite).toFixed(2) + ' ');
-            }
+            $.each(result.items, function (key, value) {
+                $('#panier_produit_qty'+value.id).text(' ' + value.quantite + ' ');
+                $('#panier_produit_prix'+value.id).text(' ' +(value.prix * value.quantite).toFixed(2) + ' ');
+            });
             let total = 'Total: '+ result.valeur.toFixed(2)
             $('#total').text(total)
         }
@@ -60,11 +59,13 @@ function panier_remove_item(id_item){
             xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
         },
         success: function( result ) {
-            result.items.forEach(updatePanier)
-            function updatePanier(item) {
-                $('#panier_produit_qty'+item.id).text(' ' + item.quantite + ' ');
-                $('#panier_produit_prix'+item.id).text(' ' +(item.prix * item.quantite).toFixed(2) + ' ');
-            }
+            $.each(result.items, function (key, value) {
+                if(value.quantite < 0 && value.id == id_item){
+                    panier_add_item(id_item);
+                }
+                $('#panier_produit_qty'+value.id).text(' ' + value.quantite + ' ');
+                $('#panier_produit_prix'+value.id).text(' ' +(value.prix * value.quantite).toFixed(2) + ' ');
+            });
             let total = 'Total: '+ result.valeur.toFixed(2)
             $('#total').text(total)
         }

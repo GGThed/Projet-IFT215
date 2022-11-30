@@ -11,8 +11,7 @@ function chargerproduit(){
         success: function( result ) {
             console.log(result);
             $.each(result, function (key, value) {
-                qty = 0;
-                item = item_to_html(value, qty);
+                item = item_to_html(value);
                 $('#list_items').append(item);
             });
         }
@@ -71,14 +70,12 @@ function produit_add_item(id_item){
             xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
         },
         success: function( result ) {
-            console.log(result);
             let sum = 0;
-            result.items.forEach(sommeQuantite)
-            function sommeQuantite(item) {
-                qty = item.quantite;
+            $.each(result.items, function (key, value) {
+                qty = value.quantite;
                 sum += qty;
-                $('#produit_item_qty'+item.id).text(qty+' ');
-            }
+                $('#produit_item_qty'+value.id).text(qty+' ');
+            });
             $('#item_counter').text(sum)
         }
     });
@@ -93,14 +90,15 @@ function produit_remove_item(id_item){
             xhr.setRequestHeader('Authorization', "Basic "+ TOKEN_CLIENT);
         },
         success: function( result ) {
-            console.log(result);
             let sum = 0;
-            result.items.forEach(sommeQuantite)
-            function sommeQuantite(item) {
-                qty = item.quantite;
+            $.each(result.items, function (key, value) {
+                if(value.quantite < 0 && value.id == id_item){
+                    produit_add_item(id_item);
+                }
+                qty = value.quantite;
                 sum += qty;
-                $('#produit_item_qty'+item.id).text(qty+' ');
-            }
+                $('#produit_item_qty'+value.id).text(qty+' ');
+            });
             $('#item_counter').text(sum)
         }
     });
