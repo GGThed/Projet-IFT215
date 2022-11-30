@@ -247,3 +247,8 @@ form .group select{
     text-align: center;
     width: 100%;
 }
+
+.divider{
+    border-collapse: collapse;
+    border: 1px solid black;
+}
