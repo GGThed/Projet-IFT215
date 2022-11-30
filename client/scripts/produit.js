@@ -94,6 +94,7 @@ function produit_remove_item(id_item){
             $.each(result.items, function (key, value) {
                 if(value.quantite < 0 && value.id == id_item){
                     produit_add_item(id_item);
+                    window.alert("Vous ne pouvez pas mettre une quantité inférieure à 0.");
                 }
                 qty = value.quantite;
                 sum += qty;

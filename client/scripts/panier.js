@@ -62,6 +62,7 @@ function panier_remove_item(id_item){
             $.each(result.items, function (key, value) {
                 if(value.quantite < 0 && value.id == id_item){
                     panier_add_item(id_item);
+                    window.alert("Vous ne pouvez pas mettre une quantité inférieure à 0.");
                 }
                 $('#panier_produit_qty'+value.id).text(' ' + value.quantite + ' ');
                 $('#panier_produit_prix'+value.id).text(' ' +(value.prix * value.quantite).toFixed(2) + ' ');
