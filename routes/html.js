@@ -34,8 +34,4 @@ router.get('/gestion_commandes', function(req, res){
     res.sendFile(path.join(__dirname + '/../client/gestion_commandes.html'));
 });
 
-router.get('/commande_employe', function(req, res){
-    res.sendFile(path.join(__dirname + '/../client/commande_employe.html'));
-});
-
 module.exports = router
