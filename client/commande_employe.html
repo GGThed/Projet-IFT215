@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="offset-md-11">
+    <b id="total_cmd"></b>
+  </div>
+  <div class="row">
+    <div class="col"> <b>Nom</b> </div>
+    <div class ="col"> <b>Prix</b> </div>
+    <div class="col"> <b>Qty</b> </div>
+    <div class="col"> <b>Total</b> </div>
+    <hr>
+  </div>
+  <div id="list_cmd">
+  </div>
+  <div>
+    <p><b> Status </b></p>
+    <select id = "status" onchange="changeStatus()" >
+      <option value="recue"> Reçue </option>
+      <option value="prepare"> Préparé </option>
+      <option value="en_route"> En route </option>
+      <option value="livree"> Livrée </option>
+    </select>
+  </div>
+
+</div>

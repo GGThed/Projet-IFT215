@@ -30,4 +30,21 @@ router.get('/panier', function(req, res){
     res.sendFile(path.join(__dirname + '/../client/panier.html'));
 });
 
+router.get('/paiement', function(req, res){
+    res.sendFile(path.join(__dirname + '/../client/paiement.html'));
+});
+
+// ajout
+router.get('/connexion', function(req, res){
+    res.sendFile(path.join(__dirname + '/../client/connexion.html'));
+});
+
+router.get('/confirmation', function(req, res){
+    res.sendFile(path.join(__dirname + '/../client/confirmation.html'));
+});
+
+router.get('/gestion_commandes', function(req, res){
+    res.sendFile(path.join(__dirname + '/../client/gestion_commandes.html'));
+});
+
 module.exports = router
